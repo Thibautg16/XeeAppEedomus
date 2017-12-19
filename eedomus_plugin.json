@@ -1,0 +1,339 @@
+{
+    "plugin_id": "xeeapp",
+    "name_fr": "Xee",
+    "icon": "xee.png",
+    "version": "4.0",
+    "creation_date": "2017-12-12",
+    "modification_date": "2017-12-19",
+    "author": "<a href='https://twitter.com/Thibautg16' target='_blank'>@Thibautg16</a> / <a href='https://github.com/Thibautg16/XeeAppEedomus' target='_blank'> GitHub </a>",
+    "description_fr": "Suivez votre véhicule à l'aide de <a href='http://www.xee.com/' target='_blank'>Xee</a> et son API à partir de votre box Eedomus.",
+    "description_en": "Track your vehicle using <a href='http://www.xee.com/' target='_blank'>Xee</a> and his API from your Eedomus box.",
+    "forum_link": "",
+    "parameters":
+    [
+        {
+            "parameter": "oauth_url", 
+            "description": "",
+            "xtype": "displayfield",
+            "field": "style: 'padding: 3px;', value: 'Cliquez <a href=\\'javascript:xeeRegister();\\'>ici pour associer votre Xee et obtenir votre identifiant véhicule</a>'"
+        },
+        {
+            "parameter": "car_id", 
+            "description": "Identifiant véhicule :",
+            "xtype": "numberfield",
+            "field": "allowBlank: false, width: 130"
+        },
+        {
+            "parameter": "box_vitesse",
+            "description": "Vitesse :",
+            "xtype": "checkbox",
+            "field": "style: 'margin-top: 6px;', checked: true"
+        },
+        {
+            "parameter": "box_moteur_speed",
+            "description": "Vitesse Moteur :",
+            "xtype": "checkbox",
+            "field": "style: 'margin-top: 6px;'"
+        },
+        {
+            "parameter": "box_kilometrage",
+            "description": "Kilometrage :",
+            "xtype": "checkbox",
+            "field": "style: 'margin-top: 6px;', checked: true"
+        },
+        {
+            "parameter": "box_batterie",
+            "description": "Batterie :",
+            "xtype": "checkbox",
+            "field": "style: 'margin-top: 6px;', checked: true"
+        },
+        {
+            "parameter": "box_carburant",
+            "description": "Carburant :",
+            "xtype": "checkbox",
+            "field": "style: 'margin-top: 6px;', checked: true"
+        },
+        {
+            "parameter": "box_phares",
+            "description": "Phares :",
+            "xtype": "checkbox",
+            "field": "style: 'margin-top: 6px;', checked: true"
+        },
+        {
+            "parameter": "box_codes",
+            "description": "Codes :",
+            "xtype": "checkbox",
+            "field": "style: 'margin-top: 6px;'"
+        },
+        {
+            "parameter": "box_veilleuses",
+            "description": "Veilleuses :",
+            "xtype": "checkbox",
+            "field": "style: 'margin-top: 6px;'"
+        },
+        {
+            "parameter": "box_verouillage",
+            "description": "Verrouillage :",
+            "xtype": "checkbox",
+            "field": "style: 'margin-top: 6px;'"
+        },
+        {
+            "parameter": "box_ignition",
+            "description": "Etat (On/Off) :",
+            "xtype": "checkbox",
+            "field": "style: 'margin-top: 6px;'"
+        }
+    ],
+    	"scripts":
+        [
+            {
+                "name": "xee_oauth.php"
+            }
+        ],    
+    "devices":
+        [
+            {
+                "device_id": "position",
+                "module_id": "31",
+                "name_fr": "plugin.name - Position",
+                "icon": "xee.png",
+                "utilisation_id":"0",
+                "value_type": "string",
+                "parameters":
+                    {
+				        "value_type": "string",
+                        "ignore_errors": 3
+                    }
+            },
+            {
+                "device_id": "vitesse",
+                "create":"plugin.parameters.box_vitesse",
+                "parent_id": "position",
+                "module_id": "51",
+                "type": "http",
+                "name_fr": "plugin.name - Vitesse",
+                "icon": "xee_vitesse.png",
+                "utilisation_id":"35",
+                "value_unit": "Km/h",
+                "parameters":
+                    {
+				        "VAR1": "plugin.parameters.car_id",
+				        "VAR2": "plugin.parameters.parent_controller_module_id",
+                        "value_type": "float",
+                        "ignore_errors": 3,
+                        "RAW_URL": "http://localhost/script/?exec=xee_oauth.php&car_id=[VAR1]&position_controller_module_id=[VAR2]",
+                        "RAW_XPATH": "//*[contains(text(), 'VehiculeSpeed')]/../value",
+                        "POLLING": "3"
+                    }
+            },
+            {
+                "device_id": "moteur_speed",
+                "create":"plugin.parameters.box_moteur_speed",
+                "parent_id": "position",
+                "module_id": "51",
+                "type": "http",
+                "name_fr": "plugin.name - Vitesse Moteur",
+                "icon": "xee_compte_tours.png",
+                "utilisation_id":"35",
+                "value_unit": "Tr/min",
+                "parameters":
+                    {
+				        "VAR1": "plugin.parameters.car_id",
+				        "VAR2": "plugin.parameters.parent_controller_module_id",
+                        "value_type": "float",
+                        "ignore_errors": 3,
+                        "RAW_URL": "http://localhost/script/?exec=xee_oauth.php&car_id=[VAR1]&position_controller_module_id=[VAR2]",
+                        "RAW_XPATH": "//*[contains(text(), 'EngineSpeed')]/../value",
+                        "POLLING": "3"
+                    }
+            },            
+            {
+                "device_id": "kilometrage",
+                "create":"plugin.parameters.box_kilometrage",
+                "parent_id": "position",
+                "module_id": "51",
+                "type": "http",
+                "name_fr": "plugin.name - Kilométrage",
+                "icon": "kilometrage.png",
+                "utilisation_id":"35",
+                "value_unit": "Km",
+                "parameters":
+                    {
+				        "VAR1": "plugin.parameters.car_id",
+				        "VAR2": "plugin.parameters.parent_controller_module_id",
+                        "value_type": "float",
+                        "ignore_errors": 3,
+                        "RAW_URL": "http://localhost/script/?exec=xee_oauth.php&car_id=[VAR1]&position_controller_module_id=[VAR2]",
+                        "RAW_XPATH": "//*[contains(text(), 'Odometer')]/../value",
+                        "POLLING": "3"
+                    }
+            },
+            {
+                "device_id": "batterie",
+                "create":"plugin.parameters.box_batterie",
+                "parent_id": "position",
+                "module_id": "51",
+                "type": "http",
+                "name_fr": "plugin.name - Batterie",
+                "icon": "xee_batt.png",
+                "utilisation_id":"35",
+                "value_unit": "V",
+                "parameters":
+                    {
+				        "VAR1": "plugin.parameters.car_id",
+				        "VAR2": "plugin.parameters.parent_controller_module_id",
+                        "value_type": "float",
+                        "ignore_errors": 3,
+                        "RAW_URL": "http://localhost/script/?exec=xee_oauth.php&car_id=[VAR1]&position_controller_module_id=[VAR2]",
+                        "RAW_XPATH": "//*[contains(text(), 'BatteryVoltage')]/../value",
+                        "POLLING": "3"
+                    }
+            },
+            {
+                "device_id": "carburant",
+                "create":"plugin.parameters.box_carburant",
+                "parent_id": "position",
+                "module_id": "51",
+                "type": "http",
+                "name_fr": "plugin.name - Carburant",
+                "icon": "xee_carburant.png",
+                "utilisation_id":"35",
+                "value_unit": "L",
+                "parameters":
+                    {
+				        "VAR1": "plugin.parameters.car_id",
+				        "VAR2": "plugin.parameters.parent_controller_module_id",
+                        "value_type": "float",
+                        "ignore_errors": 3,
+                        "RAW_URL": "http://localhost/script/?exec=xee_oauth.php&car_id=[VAR1]&position_controller_module_id=[VAR2]",
+                        "RAW_XPATH": "//*[contains(text(), 'FuelLevel')]/../value",
+                        "POLLING": "3"
+                    }
+            },
+            {
+                "device_id": "phares",
+                "create":"plugin.parameters.box_phares",
+                "parent_id": "position",
+                "module_id": "51",
+                "type": "http",
+                "name_fr": "plugin.name - Phares",
+                "icon": "xee.png",
+                "utilisation_id":"35",
+                "parameters":
+                    {
+				        "VAR1": "plugin.parameters.car_id",
+				        "VAR2": "plugin.parameters.parent_controller_module_id",
+                        "value_type": "list",
+                        "ignore_errors": 3,
+                        "RAW_URL": "http://localhost/script/?exec=xee_oauth.php&car_id=[VAR1]&position_controller_module_id=[VAR2]",
+                        "RAW_XPATH": "//*[contains(text(), 'HeadLightSts')]/../value",
+                        "POLLING": "3"
+                    },
+                    "values":
+                    [
+                        { "value": "0", "icon": "xee_phares_off.png", "description": "Eteints"},
+                        { "value": "1", "icon": "xee_phares_on.png", "description": "Allumés"}
+                    ]                        
+            },
+            {
+                "device_id": "codes",
+                "create":"plugin.parameters.box_codes",
+                "parent_id": "position",
+                "module_id": "51",
+                "type": "http",
+                "name_fr": "plugin.name - Codes",
+                "icon": "xee.png",
+                "utilisation_id":"35",
+                "parameters":
+                    {
+				        "VAR1": "plugin.parameters.car_id",
+				        "VAR2": "plugin.parameters.parent_controller_module_id",
+                        "value_type": "list",
+                        "ignore_errors": 3,
+                        "RAW_URL": "http://localhost/script/?exec=xee_oauth.php&car_id=[VAR1]&position_controller_module_id=[VAR2]",
+                        "RAW_XPATH": "//*[contains(text(), 'HighBeamSts')]/../value",
+                        "POLLING": "3"
+                    },
+                    "values":
+                    [
+                        { "value": "0", "icon": "xee_codes_off.png", "description": "Eteints"},
+                        { "value": "1", "icon": "xee_codes_on.png", "description": "Allumés"}
+                    ]                        
+            }, 
+            {
+                "device_id": "veilleuses",
+                "create":"plugin.parameters.box_veilleuses",
+                "parent_id": "position",
+                "module_id": "51",
+                "type": "http",
+                "name_fr": "plugin.name - Veilleuses",
+                "icon": "xee.png",
+                "utilisation_id":"35",
+                "parameters":
+                    {
+				        "VAR1": "plugin.parameters.car_id",
+				        "VAR2": "plugin.parameters.parent_controller_module_id",
+                        "value_type": "list",
+                        "ignore_errors": 3,
+                        "RAW_URL": "http://localhost/script/?exec=xee_oauth.php&car_id=[VAR1]&position_controller_module_id=[VAR2]",
+                        "RAW_XPATH": "//*[contains(text(), 'LowBeamSts')]/../value",
+                        "POLLING": "3"
+                    },
+                    "values":
+                    [
+                        { "value": "0", "icon": "xee_veilleuses_off.png", "description": "Eteints"},
+                        { "value": "1", "icon": "xee_veilleuses_on.png", "description": "Allumés"}
+                    ]                        
+            },                          
+            {
+                "device_id": "verouillage",
+                "create":"plugin.parameters.box_verouillage",
+                "parent_id": "position",
+                "module_id": "51",
+                "type": "http",
+                "name_fr": "plugin.name - Verouillage",
+                "icon": "xee.png",
+                "utilisation_id":"35",
+                "parameters":
+                    {
+				        "VAR1": "plugin.parameters.car_id",
+				        "VAR2": "plugin.parameters.parent_controller_module_id",
+                        "value_type": "list",
+                        "ignore_errors": 3,
+                        "RAW_URL": "http://localhost/script/?exec=xee_oauth.php&car_id=[VAR1]&position_controller_module_id=[VAR2]",
+                        "RAW_XPATH": "//*[contains(text(), 'LockSts')]/../value",
+                        "POLLING": "3"
+                    },
+                    "values":
+                    [
+                        { "value": "0", "icon": "xee_deverou.png", "description": "Ouvert"},
+                        { "value": "1", "icon": "xee_verou.png", "description": "Fermé"}
+                    ]                        
+            },                          
+            {
+                "device_id": "ignition",
+                "create":"plugin.parameters.box_ignition",
+                "parent_id": "position",
+                "module_id": "51",
+                "type": "http",
+                "name_fr": "plugin.name - Etat",
+                "icon": "xee.png",
+                "utilisation_id":"35",
+                "parameters":
+                    {
+				        "VAR1": "plugin.parameters.car_id",
+				        "VAR2": "plugin.parameters.parent_controller_module_id",
+                        "value_type": "list",
+                        "ignore_errors": 3,
+                        "RAW_URL": "http://localhost/script/?exec=xee_oauth.php&car_id=[VAR1]&position_controller_module_id=[VAR2]",
+                        "RAW_XPATH": "//*[contains(text(), 'IgnitionSts')]/../value",
+                        "POLLING": "3"
+                    },
+                    "values":
+                    [
+                        { "value": "0", "icon": "xee_car_off.png", "description": "Off"},
+                        { "value": "1", "icon": "xee_car_on.png", "description": "On"}
+                    ]                        
+            }                    
+        ]
+}
