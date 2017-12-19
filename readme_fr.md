@@ -43,7 +43,7 @@ Plusieurs modules sont créés sur votre box eedomus, suivant les canaux choisis:
 ![xee_eedomus_widget](https://user-images.githubusercontent.com/4451322/34132405-f3e8f100-e44f-11e7-998c-49bb461ea43b.png)
 
 
-![alt text](https://img.shields.io/github/release/Thibautg16/XeeAppEedomus.svg?style=for-the-badge)
-![alt text](https://img.shields.io/github/license/Thibautg16/XeeAppEedomus.svg?style=for-the-badge)
-![alt text](https://img.shields.io/badge/Status-Prod-green.svg?style=for-the-badge)
-![alt text](https://img.shields.io/badge/twitter-@Thibautg16-blue.svg?style=for-the-badge)
+![Release](https://img.shields.io/github/release/Thibautg16/XeeAppEedomus.svg?style=for-the-badge)
+![Licence : GNU GPL v3.0](https://img.shields.io/github/license/Thibautg16/XeeAppEedomus.svg?style=for-the-badge)
+![Status : Attente Validation](https://img.shields.io/badge/Status-Attente_Validation-red.svg?style=for-the-badge)
+![Twitter : @Thibautg16](https://img.shields.io/badge/twitter-@Thibautg16-blue.svg?style=for-the-badge)
