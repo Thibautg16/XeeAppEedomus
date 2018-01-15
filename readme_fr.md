@@ -59,5 +59,5 @@ Cliquez alors sur "Mettre à jour xee_oauth.php avec la dernière version disponib
 
 ![Release](https://img.shields.io/github/release/Thibautg16/XeeAppEedomus.svg?style=for-the-badge)
 ![Licence : GNU GPL v3.0](https://img.shields.io/github/license/Thibautg16/XeeAppEedomus.svg?style=for-the-badge)
-![Status : Attente Validation](https://img.shields.io/badge/Status-Attente_Validation-red.svg?style=for-the-badge)
+![status_prod](https://img.shields.io/badge/Status-Prod-green.svg?style=for-the-badge)
 ![Twitter : @Thibautg16](https://img.shields.io/badge/twitter-@Thibautg16-blue.svg?style=for-the-badge)
