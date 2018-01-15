@@ -2,13 +2,13 @@
     "plugin_id": "xeeapp",
     "name_fr": "Xee",
     "icon": "xee.png",
-    "version": "4.0",
+    "version": "4.1",
     "creation_date": "2017-12-12",
-    "modification_date": "2017-12-19",
+    "modification_date": "2018-01-15",
     "author": "<a href='https://twitter.com/Thibautg16' target='_blank'>@Thibautg16</a> / <a href='https://github.com/Thibautg16/XeeAppEedomus' target='_blank'> GitHub </a>",
     "description_fr": "Suivez votre véhicule à l'aide de <a href='http://www.xee.com/' target='_blank'>Xee</a> et son API à partir de votre box Eedomus.",
     "description_en": "Track your vehicle using <a href='http://www.xee.com/' target='_blank'>Xee</a> and his API from your Eedomus box.",
-    "forum_link": "",
+    "forum_link": "http://forum.eedomus.com/viewtopic.php?f=50&t=6319",
     "parameters":
     [
         {

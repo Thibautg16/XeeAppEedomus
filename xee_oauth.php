@@ -3,6 +3,7 @@
 // Version 1 / 24 février 2016		// Initial version
 // Version 2 / 30 mai 2016				// multiple Xee modules support
 // version 3 / 16 aout 2016       // API v3 update
+// version 4 / 9 janvier 2018     // Correction réassociation
 
 $api_url = 'https://cloud.xee.com/v3/';
 
@@ -46,8 +47,20 @@ if ($access_token == '')
 
 	if ($params['error'] != '')
 	{
-    var_dump($api_url.'auth/access_token', $postdata);
-		die("<br><br>Auth error: <b>".$params['error'].'</b> (grant_type = '.$grant_type.')<br><br>'.$response);
+		// on reessaie avec le token global (l'utilisateur a pu refaire une association)
+		if ($params['error'] == 'invalid_request' && $grant_type == 'refresh_token')
+		{
+			$refresh_token = loadVariable('refresh_token');
+			$postdata = 'grant_type='.$grant_type.'&refresh_token='.$refresh_token;
+			$response = httpQuery($api_url.'auth/access_token', 'POST', $postdata, 'xee_oauth');
+			$params = sdk_json_decode($response);
+		}
+		
+		if ($params['error'] != '')
+		{
+			var_dump($api_url.'auth/access_token', $postdata);
+			die("<br><br>Auth error: <b>".$params['error'].'</b> (grant_type = '.$grant_type.')<br><br>'.$response);
+		}
 	}
 
 	// save on eedomus gateway for further use
@@ -121,7 +134,7 @@ else
 
   // updating position channel
   $position_controller_module_id = getArg('position_controller_module_id');
-	
+  
   $last_lat_long = loadVariable('last_lat_long'.$_GET['car_id']);
   $last_lat_long_time = loadVariable('last_lat_long_time'.$_GET['car_id']);
 	

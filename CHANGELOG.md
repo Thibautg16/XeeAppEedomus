@@ -1,7 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [v4.1] - 2018-01-15
+- Fix : ré-association oauth by Connected Object pour eedomus
 
 ## [v4.0] by @Thibautg16 - 2017-12-19 
 - New : Création de l'application à partir du script existant
