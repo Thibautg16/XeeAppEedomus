@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [v5.0] by @Fabmaurel - 2018-05-28
+- New : Ajout des canaux relatifs aux véhicules électriques
+- Added : Canal "VE - Tension batterie traction" : tension de la batterie de traction (V)
+- Added : Canal "VE - Niveau de charge batterie traction" : niveau de charge de la batterie traction (%)
+- Added : Canal "VE - Autonomie estimée" : autonomie restante estimée (km)
+- Added : Canal "VE - Temps de charge restant" : temps de recharge restant (mn)
+- Added : Canal "VE - Etat de santé batterie traction" : niveau de santé (SOH) de la batterie de traction (%)
+- Fix : Correction d'un bug sur la tension batterie accessoires dans le cadre de l'utilisation d'un véhicule électrique
+- Fix : Correction faute d'orthographe "Verrouillage"
+
+
 ## [v4.1] - 2018-01-15
 - Fix : ré-association oauth by Connected Object pour eedomus
 
