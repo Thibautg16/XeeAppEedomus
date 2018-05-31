@@ -2,10 +2,10 @@
     "plugin_id": "xeeapp",
     "name_fr": "Xee",
     "icon": "xee.png",
-    "version": "4.1",
+    "version": "5.0",
     "creation_date": "2017-12-12",
-    "modification_date": "2018-01-15",
-    "author": "<a href='https://twitter.com/Thibautg16' target='_blank'>@Thibautg16</a> / <a href='https://github.com/Thibautg16/XeeAppEedomus' target='_blank'> GitHub </a>",
+    "modification_date": "2018-05-28",
+    "author": "<a href='https://twitter.com/Thibautg16' target='_blank'>@Thibautg16</a> et <a href='https://twitter.com/fabmaurel' target='_blank'>@Fabmaurel</a> / <a href='https://github.com/Thibautg16/XeeAppEedomus' target='_blank'> GitHub </a>",
     "description_fr": "Suivez votre véhicule à l'aide de <a href='http://www.xee.com/' target='_blank'>Xee</a> et son API à partir de votre box Eedomus.",
     "description_en": "Track your vehicle using <a href='http://www.xee.com/' target='_blank'>Xee</a> and his API from your Eedomus box.",
     "forum_link": "http://forum.eedomus.com/viewtopic.php?f=50&t=6319",
@@ -72,7 +72,7 @@
             "field": "style: 'margin-top: 6px;'"
         },
         {
-            "parameter": "box_verouillage",
+            "parameter": "box_verrouillage",
             "description": "Verrouillage :",
             "xtype": "checkbox",
             "field": "style: 'margin-top: 6px;'"
@@ -80,6 +80,36 @@
         {
             "parameter": "box_ignition",
             "description": "Etat (On/Off) :",
+            "xtype": "checkbox",
+            "field": "style: 'margin-top: 6px;'"
+        },
+		{
+            "parameter": "box_ev_tension",
+            "description": "VE - Tension batterie traction :",
+            "xtype": "checkbox",
+            "field": "style: 'margin-top: 6px;'"
+        },
+		{
+            "parameter": "box_ev_niveau_charge",
+            "description": "VE - Niveau de charge batterie traction :",
+            "xtype": "checkbox",
+            "field": "style: 'margin-top: 6px;'"
+        },
+		{
+            "parameter": "box_ev_autonomie",
+            "description": "VE - Autonomie estimée :",
+            "xtype": "checkbox",
+            "field": "style: 'margin-top: 6px;'"
+        },
+		{
+            "parameter": "box_ev_tps_restant",
+            "description": "VE - Temps de charge restant :",
+            "xtype": "checkbox",
+            "field": "style: 'margin-top: 6px;'"
+        },
+		{
+            "parameter": "box_ev_soh",
+            "description": "VE - Etat de santé de la batterie traction :",
             "xtype": "checkbox",
             "field": "style: 'margin-top: 6px;'"
         }
@@ -185,7 +215,7 @@
                         "value_type": "float",
                         "ignore_errors": 3,
                         "RAW_URL": "http://localhost/script/?exec=xee_oauth.php&car_id=[VAR1]&position_controller_module_id=[VAR2]",
-                        "RAW_XPATH": "//*[contains(text(), 'BatteryVoltage')]/../value",
+                        "RAW_XPATH": "//*[contains(text(), 'BatteryVoltage') and not (contains(text(), 'EV')) ]/../value",
                         "POLLING": "3"
                     }
             },
@@ -286,12 +316,12 @@
                     ]                        
             },                          
             {
-                "device_id": "verouillage",
-                "create":"plugin.parameters.box_verouillage",
+                "device_id": "verrouillage",
+                "create":"plugin.parameters.box_verrouillage",
                 "parent_id": "position",
                 "module_id": "51",
                 "type": "http",
-                "name_fr": "plugin.name - Verouillage",
+                "name_fr": "plugin.name - Verrouillage",
                 "icon": "xee.png",
                 "utilisation_id":"35",
                 "parameters":
@@ -334,6 +364,111 @@
                         { "value": "0", "icon": "xee_car_off.png", "description": "Off"},
                         { "value": "1", "icon": "xee_car_on.png", "description": "On"}
                     ]                        
-            }                    
+            },
+			{
+                "device_id": "ev_tension",
+                "create":"plugin.parameters.box_ev_tension",
+                "parent_id": "position",
+                "module_id": "51",
+                "type": "http",
+                "name_fr": "plugin.name - VE - Tension batterie traction",
+                "icon": "xee_batt.png",
+                "utilisation_id":"35",
+				"value_unit": "V",
+                "parameters":
+                    {
+				        "VAR1": "plugin.parameters.car_id",
+				        "VAR2": "plugin.parameters.parent_controller_module_id",
+                        "value_type": "float",
+                        "ignore_errors": 3,
+                        "RAW_URL": "http://localhost/script/?exec=xee_oauth.php&car_id=[VAR1]&position_controller_module_id=[VAR2]",
+                        "RAW_XPATH": "//*[contains(text(), 'EVBatteryVoltage')]/../value",
+                        "POLLING": "3"
+                    }                      
+            },
+			{
+                "device_id": "ev_niveau_charge",
+                "create":"plugin.parameters.box_ev_niveau_charge",
+                "parent_id": "position",
+                "module_id": "51",
+                "type": "http",
+                "name_fr": "plugin.name - VE - Niveau de charge batterie traction",
+                "icon": "xee_batt.png",
+                "utilisation_id":"35",
+				"value_unit": "%",
+                "parameters":
+                    {
+				        "VAR1": "plugin.parameters.car_id",
+				        "VAR2": "plugin.parameters.parent_controller_module_id",
+                        "value_type": "float",
+                        "ignore_errors": 3,
+                        "RAW_URL": "http://localhost/script/?exec=xee_oauth.php&car_id=[VAR1]&position_controller_module_id=[VAR2]",
+                        "RAW_XPATH": "//*[contains(text(), 'EVBatterySOC')]/../value",
+                        "POLLING": "3"
+                    }                       
+            },
+			{
+                "device_id": "ev_autonomie",
+                "create":"plugin.parameters.box_ev_autonomie",
+                "parent_id": "position",
+                "module_id": "51",
+                "type": "http",
+                "name_fr": "plugin.name - VE - Autonomie estimée",
+                "icon": "kilometrage.png",
+                "utilisation_id":"35",
+				"value_unit": "km",
+                "parameters":
+                    {
+				        "VAR1": "plugin.parameters.car_id",
+				        "VAR2": "plugin.parameters.parent_controller_module_id",
+                        "value_type": "float",
+                        "ignore_errors": 3,
+                        "RAW_URL": "http://localhost/script/?exec=xee_oauth.php&car_id=[VAR1]&position_controller_module_id=[VAR2]",
+                        "RAW_XPATH": "//*[contains(text(), 'EVRemainingRange')]/../value",
+                        "POLLING": "3"
+                    }                       
+            },
+			{
+                "device_id": "ev_tps_restant",
+                "create":"plugin.parameters.box_ev_tps_restant",
+                "parent_id": "position",
+                "module_id": "51",
+                "type": "http",
+                "name_fr": "plugin.name - VE - Temps de charge restant",
+                "icon": "minuterie.png",
+                "utilisation_id":"35",
+				"value_unit": "mn",
+                "parameters":
+                    {
+				        "VAR1": "plugin.parameters.car_id",
+				        "VAR2": "plugin.parameters.parent_controller_module_id",
+                        "value_type": "list",
+                        "ignore_errors": 3,
+                        "RAW_URL": "http://localhost/script/?exec=xee_oauth.php&car_id=[VAR1]&position_controller_module_id=[VAR2]",
+                        "RAW_XPATH": "//*[contains(text(), 'EVRemainingChargeTime')]/../value",
+                        "POLLING": "3"
+                    }                     
+            },
+			{
+                "device_id": "ev_soh",
+                "create":"plugin.parameters.box_ev_soh",
+                "parent_id": "position",
+                "module_id": "51",
+                "type": "http",
+                "name_fr": "plugin.name - VE - Etat de santé batterie traction",
+                "icon": "health.png",
+                "utilisation_id":"35",
+				"value_unit": "%",
+                "parameters":
+                    {
+				        "VAR1": "plugin.parameters.car_id",
+				        "VAR2": "plugin.parameters.parent_controller_module_id",
+                        "value_type": "float",
+                        "ignore_errors": 3,
+                        "RAW_URL": "http://localhost/script/?exec=xee_oauth.php&car_id=[VAR1]&position_controller_module_id=[VAR2]",
+                        "RAW_XPATH": "//*[contains(text(), 'EVBatteryHealth')]/../value",
+                        "POLLING": "3"
+                    }                   
+            }
         ]
 }
