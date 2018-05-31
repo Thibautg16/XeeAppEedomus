@@ -11,7 +11,6 @@ All notable changes to this project will be documented in this file.
 - Fix : Correction d'un bug sur la tension batterie accessoires dans le cadre de l'utilisation d'un véhicule électrique
 - Fix : Correction faute d'orthographe "Verrouillage"
 
-
 ## [v4.1] - 2018-01-15
 - Fix : ré-association oauth by Connected Object pour eedomus
 
