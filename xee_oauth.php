@@ -118,13 +118,12 @@ else
   {
     saveVariable('expire_time'.$_GET['car_id'], 0);
   }
-	
-	// "Create a new access token and then retry"
+ 	// "Create a new access token and then retry"
 	else if ($data[0]['message'] == "Token has been revoked")
   {
     saveVariable('expire_time'.$_GET['car_id'], 0);
   }
-  else if ($data[0]['message'] == "Token does not have the required scope") // Add the status_read scope to your app scopes and reconnect the user
+  else if ($data[0]['message'] == "Token does not have the required scope" || $data[0]['message'] == "Token cannot access this car") // Add the status_read scope to your app scopes and reconnect the user
   {
 		saveVariable('access_token'.$_GET['car_id'], '');
 		saveVariable('refresh_token'.$_GET['car_id'], '');

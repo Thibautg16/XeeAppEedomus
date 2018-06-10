@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [v5.1] - 2018-06-01
+- Fix : Typo by @Thibautg16
+- Fix : Token cannot access this car by Connected Object pour eedomus
+
 ## [v5.0] by @Fabmaurel - 2018-05-28
 - New : Ajout des canaux relatifs aux véhicules électriques
 - Added : Canal "VE - Tension batterie traction" : tension de la batterie de traction (V)
