@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [v5.2] - 2019-06-02
+- Fix : New api Xee - Apiv4 (change of vehicule ID)
+
 ## [v5.1] - 2018-06-01
 - Fix : Typo by @Thibautg16
 - Fix : Token cannot access this car by Connected Object pour eedomus

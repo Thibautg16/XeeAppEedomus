@@ -4,8 +4,10 @@
 // Version 2 / 30 mai 2016				// multiple Xee modules support
 // version 3 / 16 aout 2016       // API v3 update
 // version 4 / 9 janvier 2018     // Correction réassociation
+// version 5 / 1 avril 2019       // API V4
 
-$api_url = 'https://cloud.xee.com/v3/';
+// https://dev.xee.com/v4-openap
+$api_url = 'https://api.xee.com/v4/';
 
 // Code could change if we link again the eedomusXee app
 if ($_GET['mode'] != 'verify')
@@ -18,10 +20,18 @@ if ($_GET['mode'] != 'verify')
 	}
 	
 	$expire_time = loadVariable('expire_time'.$_GET['car_id']);
+	if ($expire_time == '')
+	{
+		$expire_time = loadVariable('expire_time');
+	}
 	// if not expired we can keep the old access_token
   if (time() < $expire_time)
   {
     $access_token = loadVariable('access_token'.$_GET['car_id']);
+    if ($access_token == '')
+		{
+			$access_token = loadVariable('access_token');
+		}
   }
 }
 
@@ -40,30 +50,48 @@ if ($access_token == '')
 		$code = $_GET['oauth_code'];
 		$grant_type = 'authorization_code';
 		$postdata = 'grant_type='.$grant_type.'&code='.$code;
+		//.'&redirect_uri='.("https://secure.eedomus.com/sdk/plugins/xee/callback.php");
 	}
 	
-	$response = httpQuery($api_url.'auth/access_token', 'POST', $postdata, 'xee_oauth');
+	$response = httpQuery($api_url.'oauth/token', 'POST', $postdata, 'xee_oauth_v4');
 	$params = sdk_json_decode($response);
+	//var_dump($api_url.'oauth/token', $postdata, $response);
 
-	if ($params['error'] != '')
+	if ($params['error'] != '' && !isset($params['refresh_token']))
 	{
 		// on reessaie avec le token global (l'utilisateur a pu refaire une association)
-		if ($params['error'] == 'invalid_request' && $grant_type == 'refresh_token')
+		if ($params['error'] == 'invalid_request' && $grant_type == 'refresh_token' && $_GET['car_id'] != '')
 		{
-			$refresh_token = loadVariable('refresh_token');
+			$refresh_token = loadVariable('refresh_token'.$_GET['car_id']);
 			$postdata = 'grant_type='.$grant_type.'&refresh_token='.$refresh_token;
-			$response = httpQuery($api_url.'auth/access_token', 'POST', $postdata, 'xee_oauth');
+			$response = httpQuery($api_url.'oauth/token', 'POST', $postdata, 'xee_oauth_v4');
 			$params = sdk_json_decode($response);
+			
+			if ($params['error'] == 'invalid_request') // le refresh token est périmé ou invalide
+			{
+				// on essaie avec le token "global" s'il existe
+				$refresh_token = loadVariable('refresh_token');
+				if ($refresh_token != '')
+				{
+					// après une réassociation suite à une perte d'association
+					$postdata = 'grant_type='.$grant_type.'&refresh_token='.$refresh_token;
+					$response = httpQuery($api_url.'oauth/token', 'POST', $postdata, 'xee_oauth_v4');
+					$params = sdk_json_decode($response);
+				}
+			}
 		}
 		
 		if ($params['error'] != '')
 		{
-			var_dump($api_url.'auth/access_token', $postdata);
-			die("<br><br>Auth error: <b>".$params['error'].'</b> (grant_type = '.$grant_type.')<br><br>'.$response);
+			echo "<br>Auth error: <b>".$params['error'].'</b> (grant_type = '.$grant_type.')<br>'.$response.'<br>'."\n";
+			echo "url:".$api_url.'oauth/token'.'<br>'; 
+			echo "postdata:".$postdata.'<br>'; 
+			die();
 		}
 	}
 
 	// save on eedomus gateway for further use
+	// on firt association $_GET['car_id'] is empty
 	if (isset($params['refresh_token']))
 	{
 		$access_token = $params['access_token'];
@@ -72,14 +100,27 @@ if ($access_token == '')
 		saveVariable('expire_time'.$_GET['car_id'], time()+$params['expires_in']);
 		saveVariable('code'.$_GET['car_id'], $code);
 		
-		// sans car_id, dans le cas de plusieurs Xee, permet de récupérer le code principal
-		saveVariable('access_token', $access_token);
-		saveVariable('refresh_token', $params['refresh_token']);
+		// we must not delete a code if this is the polling of another working eedomus script
+		if ($_GET['car_id'] != '' && $refresh_token == loadVariable('refresh_token'))
+		{
+			// so we won't reuse it again
+			// this global code is only used once, just after the first oauth association
+			saveVariable('code', '');
+			saveVariable('access_token', '');
+			saveVariable('refresh_token', '');
+		}
+		else if ($_GET['car_id'] == '')
+		{
+			// sans car_id, dans le cas de plusieurs Xee, permet de récupérer le code principal
+			// où éventuellement de faire une réassociation si on l'a perdue
+			saveVariable('access_token', $access_token);
+			saveVariable('refresh_token', $params['refresh_token']);
+		}
 	}
 	else if ($access_token == '')
 	{
-    //var_dump($api_url.'auth/access_token', $postdata, $response);
-		die("Auth error :(<br><br>".$response);
+    //var_dump($api_url.'oauth/token', $postdata, $response);
+		die("No access token :(<br>".$response);
 	}
 }
 
@@ -91,18 +132,24 @@ if ($_GET['car_id'] == '')
   $response = httpQuery($api_url.'users/me?access_token='.$access_token, 'GET', NULL, NULL, $HEADERS);
   $data = sdk_json_decode($response);
   $user_id = $data['id'];
+  $user_name = $data['firstName'].' '.$data['lastName'];
 
-  // Fetch user cars list
-  $response = httpQuery($api_url.'users/'.$user_id.'/cars?access_token='.$access_token, 'GET', NULL, NULL, $HEADERS);
+  // Fetch user vehicles list
+  $response = httpQuery($api_url.'users/me/vehicles?access_token='.$access_token, 'GET', NULL, NULL, $HEADERS);
   $data = sdk_json_decode($response);
+  
+	if (strpos($response, '"error":') !== false)
+	{
+		die($response);
+	}
 
   // car id selection "menu"
   echo "Car identifiers (Copy & paste on in eedomus) :";
   echo "<br>";
   echo "<ul>";
-  foreach($data as $cars)
+  foreach($data as $vehicles)
   {
-    echo '<li><b>'.$cars['id'].'</b> : '.$cars['name'].'</li>';
+    echo '<li><input onclick="this.select();" type="text" size="40" readonly="readonly" value="'.$vehicles['id'].'"> : '.$vehicles['brand'].' '.$vehicles['name'].' ('.$user_name.')</li>';
   }
   echo "</ul>";
   die();
@@ -110,25 +157,25 @@ if ($_GET['car_id'] == '')
 else
 {
   // Fetch car status datas
-  $response = httpQuery($api_url.'cars/'.$_GET['car_id'].'/status?access_token='.$access_token, 'GET', NULL, NULL, $HEADERS);
+  $response = httpQuery($api_url.'vehicles/'.$_GET['car_id'].'/status?access_token='.$access_token, 'GET', NULL, NULL, $HEADERS);
   $data = sdk_json_decode($response);
   
   // force token expiration for next query
-  if ($data[0]['message'] == "Token has expired")
+  if ($data[0]['message'] == "Token has expired" && $_GET['car_id'] != '')
   {
     saveVariable('expire_time'.$_GET['car_id'], 0);
   }
  	// "Create a new access token and then retry"
-	else if ($data[0]['message'] == "Token has been revoked")
+	else if ($data[0]['message'] == "Token has been revoked" && $_GET['car_id'] != '')
   {
     saveVariable('expire_time'.$_GET['car_id'], 0);
   }
   else if ($data[0]['message'] == "Token does not have the required scope" || $data[0]['message'] == "Token cannot access this car") // Add the status_read scope to your app scopes and reconnect the user
   {
-		saveVariable('access_token'.$_GET['car_id'], '');
+		/*saveVariable('access_token'.$_GET['car_id'], '');
 		saveVariable('refresh_token'.$_GET['car_id'], '');
 		saveVariable('expire_time'.$_GET['car_id'], 0);
-		saveVariable('code'.$_GET['car_id'], '');
+		saveVariable('code'.$_GET['car_id'], '');*/
 	}
 
   // updating position channel
