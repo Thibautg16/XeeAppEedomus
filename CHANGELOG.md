@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [v5.4] - 2020-06-16
+- Fix : Amélioration gestion multi-comptes/multi-xee
+
+## [v5.3] - 2019-06-30
+- Fix : Identifiant véhicule (champ texte maintenant)
+
 ## [v5.2] - 2019-06-02
 - Fix : New api Xee - Apiv4 (change of vehicule ID)
 
